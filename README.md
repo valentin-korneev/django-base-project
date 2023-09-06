@@ -72,3 +72,9 @@ exec "$@"
 ```bash
 python manage.py db_health_check
 ```
+
+# Запуск
+
+```http request
+curl http://127.0.0.1:8000
+```
