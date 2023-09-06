@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
-from project.settings import SUPERUSER_USERNAME, SUPERUSER_EMAIL, SUPERUSER_PASSWORD
+from os import environ
+from dotenv import load_dotenv, find_dotenv
 
 
 class Command(BaseCommand):
@@ -9,19 +10,28 @@ class Command(BaseCommand):
         parser.add_argument('--email')
         parser.add_argument('--password')
         parser.add_argument('--no-input', action='store_true')
+        parser.add_argument('--env')
 
     def handle(self, *args, **options):
         User = get_user_model()
 
-        if SUPERUSER_USERNAME and SUPERUSER_EMAIL and SUPERUSER_PASSWORD:
-            if options['no_input']:
-                options['username'] = SUPERUSER_USERNAME
-                options['email'] = SUPERUSER_EMAIL
-                options['password'] = SUPERUSER_PASSWORD
+        if options['env']:
+            load_dotenv(find_dotenv(f'.env.{options["env"]}'))
 
+        if options['no_input'] or options['env']:
+            options['username'] = environ.get('SUPERUSER_USERNAME')
+            options['email'] = environ.get('SUPERUSER_EMAIL')
+            options['password'] = environ.get('SUPERUSER_PASSWORD')
+
+        if options['username'] and options['email'] and options['password']:
             if not User.objects.filter(username=options['username']).exists():
                 User.objects.create_superuser(
                     username=options['username'],
                     email=options['email'],
                     password=options['password'],
                 )
+                self.stdout.write(self.style.SUCCESS(f'Пользователь {options["username"]} создан'))
+            else:
+                self.stdout.write(self.style.SUCCESS(f'Пользователь {options["username"]} уже был создан ранее'))
+        else:
+            self.stdout.write(self.style.SUCCESS('Параметры для создания пользователя не предоставлены'))

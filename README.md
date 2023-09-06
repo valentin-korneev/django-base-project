@@ -18,6 +18,7 @@ pip install -r .\app\requirements.txt
 Произведем миграцию моделей и запуск сервера
 ```bash
 python .\app\manage.py migrate
+python .\app\manage.py create_superuser --env=dev
 python .\app\manage.py runserver
 ```
 
@@ -42,10 +43,11 @@ docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 docker compose logs -f
 ```
 
-# Возможные ошибки
+# TO_DO
+## Ожидание инициализации
 Следует разобраться как исправить ситуацию, когда самая первая инициализация требует перезапуска (pg_isready возвращает флаг раньше, чем появляется реальный доступ к СУБД из приложения Django, поэтому migrations не выполняется).
 
-### Вариант (не нравится, хотелось бы решить через service_healthy):
+### Вариант 1 (не нравится, хотелось бы решить через service_healthy):
 
 Можно создать ./app/entrypoint.prod.sh, который будет вызываться из Dockerfile.prod
 
@@ -61,4 +63,12 @@ while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
 done
 
 exec "$@"
+```
+
+### Вариант 2 (использование команды manage.py)
+
+Добавление в **start.sh** проверки доступности БД решает вопрос, но при первом запуске кода был ложноположительный результат на который стоит обратить внимание 
+
+```bash
+python manage.py db_health_check
 ```
