@@ -1,0 +1,19 @@
+# Логи
+*.log
+
+# Django
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+pg_data
+
+# Среда разработки
+.idea
+
+# Виртуальное пространство
+.venv
+
+# Медиа-файлы
+static

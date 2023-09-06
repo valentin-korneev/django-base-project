@@ -1,0 +1,17 @@
+*.pyc
+*.pyo
+*.mo
+*.db
+*.css.map
+*.egg-info
+*.sql.gz
+.cache
+.project
+.idea
+.git/
+__pycache__
+dist
+docs
+.venv
+logs
+Dockerfile

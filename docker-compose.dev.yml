@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    ports:
+      - '${PROJECT_PORT}:${PROJECT_PORT}'
+    volumes:
+      - ./app:/opt/app
+    env_file:
+      - ./.env.dev
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+  db:
+    image: postgres:latest
+    volumes:
+      - ${POSTGRES_DATA}:/var/lib/postgresql/data/
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -p ${POSTGRES_PORT}" ]
+      interval: 3s
+      timeout: 30s
+      retries: 10
+    env_file:
+      - ./.env.dev
