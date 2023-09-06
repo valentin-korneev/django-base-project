@@ -16,7 +16,7 @@ class Command(BaseCommand):
         User = get_user_model()
 
         if options['env']:
-            load_dotenv(find_dotenv(f'.env.{options["env"]}'))
+            load_dotenv(find_dotenv(f'./config/.env.{options["env"]}'))
 
         if options['no_input'] or options['env']:
             options['username'] = environ.get('SUPERUSER_USERNAME')

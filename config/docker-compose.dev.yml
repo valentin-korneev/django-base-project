@@ -2,14 +2,14 @@ version: '3.8'
 services:
   web:
     build:
-      context: ./app
-      dockerfile: Dockerfile.dev
+      context: .././app
+      dockerfile: Dockerfile.${ENV}
     ports:
       - '${PROJECT_PORT}:${PROJECT_PORT}'
     volumes:
-      - ./app:/opt/app
+      - .././app:/opt/app
     env_file:
-      - ./.env.dev
+      - .env.${ENV}
     depends_on:
       db:
         condition: service_healthy
@@ -26,4 +26,4 @@ services:
       timeout: 30s
       retries: 10
     env_file:
-      - ./.env.dev
+      - .env.${ENV}
